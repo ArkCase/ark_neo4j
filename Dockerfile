@@ -7,16 +7,11 @@
 ###########################################################################################################
 
 ARG PUBLIC_REGISTRY="public.ecr.aws"
-ARG PRIVATE_REGISTRY
 ARG BASE_REPO="arkcase/base"
 ARG BASE_TAG="8.7.0"
 ARG VER="4.4.24"
 ARG BLD="02"
 ARG NEO4J_KEY_URL="https://debian.neo4j.com/neotechnology.gpg.key"
-
-ARG PUBLIC_REGISTRY
-ARG BASE_REPO
-ARG BASE_TAG
 
 FROM "${PUBLIC_REGISTRY}/${BASE_REPO}:${BASE_TAG}"
 

@@ -16,6 +16,11 @@ fail() {
 [ -v NEO4J_HOME ] || NEO4J_HOME="${BASE_DIR}/neo4j"
 [ -v NEO4J_CONF ] || NEO4J_CONF="${BASE_DIR}/conf"
 
+#
+# Init SSL certificates and trusts
+#
+acme-init
+
 # Are the databases already initialized?
 DBS="$(find "${DATA_DIR}" -type f -name '*.db' | wc -l)"
 

@@ -43,7 +43,6 @@ RUN mkdir -p "${BASE_DIR}" && \
 
 COPY --chown=root:root neo4j.repo /etc/yum.repos.d/
 RUN rpm --import "${NEO4J_KEY_URL}" && \
-    yum -y update && \
     yum -y install \
         java-11-openjdk-devel \
         jq \

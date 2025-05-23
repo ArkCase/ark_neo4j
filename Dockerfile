@@ -8,10 +8,11 @@
 
 ARG PUBLIC_REGISTRY="public.ecr.aws"
 ARG VER="4.4.33"
+ARG JAVA="11"
 ARG NEO4J_KEY_URL="https://debian.neo4j.com/neotechnology.gpg.key"
 
 ARG BASE_REGISTRY="${PUBLIC_REGISTRY}"
-ARG BASE_REPO="arkcase/base"
+ARG BASE_REPO="arkcase/base-java"
 ARG BASE_VER="8"
 ARG BASE_VER_PFX=""
 ARG BASE_IMG="${BASE_REGISTRY}/${BASE_REPO}:${BASE_VER_PFX}${BASE_VER}"
@@ -19,9 +20,8 @@ ARG BASE_IMG="${BASE_REGISTRY}/${BASE_REPO}:${BASE_VER_PFX}${BASE_VER}"
 FROM "${BASE_IMG}"
 
 ARG VER
+ARG JAVA
 ARG NEO4J_KEY_URL
-
-ENV JAVA_HOME="/usr/lib/jvm/jre-11-openjdk"
 
 ENV BASE_DIR="/app"
 ENV LOGS_DIR="${BASE_DIR}/logs"
@@ -45,9 +45,9 @@ RUN mkdir -p "${BASE_DIR}" && \
     useradd --system --uid "${NEO4J_UID}" --gid "${NEO4J_GID}" --groups "${ACM_GROUP}" --create-home --home-dir "${NEO4J_HOME}" "${NEO4J_USER}"
 
 COPY --chown=root:root neo4j.repo /etc/yum.repos.d/
-RUN rpm --import "${NEO4J_KEY_URL}" && \
+RUN set-java "${JAVA}" && \
+    rpm --import "${NEO4J_KEY_URL}" && \
     yum -y install \
-        java-11-openjdk-devel \
         jq \
         neo4j \
         openssl \

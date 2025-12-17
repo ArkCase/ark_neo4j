@@ -7,13 +7,13 @@
 ###########################################################################################################
 
 ARG PUBLIC_REGISTRY="public.ecr.aws"
-ARG VER="4.4.33"
+ARG VER="4.4"
 ARG JAVA="11"
 ARG NEO4J_KEY_URL="https://debian.neo4j.com/neotechnology.gpg.key"
 
 ARG BASE_REGISTRY="${PUBLIC_REGISTRY}"
 ARG BASE_REPO="arkcase/base-java"
-ARG BASE_VER="8"
+ARG BASE_VER="22.04"
 ARG BASE_VER_PFX=""
 ARG BASE_IMG="${BASE_REGISTRY}/${BASE_REPO}:${BASE_VER_PFX}${BASE_VER}"
 
@@ -35,27 +35,23 @@ ENV NEO4J_GROUP="${NEO4J_USER}"
 ENV NEO4J_GID="${NEO4J_UID}"
 
 LABEL ORG="Armedia LLC" \
-      APP="Neo4J PDI EE" \
+      APP="Neo4J" \
       VERSION="${VER}" \
-      IMAGE_SOURCE=https://github.com/ArkCase/ark_neo4j_pdi_ee \
+      IMAGE_SOURCE="https://github.com/ArkCase/ark_neo4j" \
       MAINTAINER="Armedia Devops Team <devops@armedia.com>"
 
 RUN mkdir -p "${BASE_DIR}" && \
     groupadd --system --gid "${NEO4J_GID}" "${NEO4J_GROUP}" && \
     useradd --system --uid "${NEO4J_UID}" --gid "${NEO4J_GID}" --groups "${ACM_GROUP}" --create-home --home-dir "${NEO4J_HOME}" "${NEO4J_USER}"
 
-COPY --chown=root:root neo4j.repo /etc/yum.repos.d/
 RUN set-java "${JAVA}" && \
-    rpm --import "${NEO4J_KEY_URL}" && \
-    yum -y install \
-        jq \
+    wget -O - "${NEO4J_KEY_URL}" | apt-key add - && \
+    echo 'deb https://debian.neo4j.com stable 4.4' > /etc/apt/sources.list.d/neo4j.list && \
+    apt-get update && \
+    apt-get -y install \
         neo4j \
-        openssl \
-        sudo \
-        unzip \
-        xmlstarlet \
-    && \
-    yum -y clean all
+      && \
+    apt-get clean
 
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
